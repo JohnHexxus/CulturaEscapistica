@@ -42,8 +42,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Escape Room team profiles with skills and roles for strategic puzzle-solving.">
-  <title>Escape Room Team Profiles</title>
+  <meta name="description" content="Cultura Escapística team profiles with skills and roles for strategic puzzle-solving.">
+  <title>Cultura Escapística</title>
   <link rel="icon" type="image/png" href="https://via.placeholder.com/32?text=🔐">
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
@@ -82,17 +82,22 @@
     <!-- Main Content -->
     <div class="flex-1 p-4">
       <!-- Banner -->
-      <img src="https://via.placeholder.com/1200x200?text=Escape+Room+Banner" alt="Escape Room" class="w-full rounded-md mb-6 shadow-md">
+      <img src="https://via.placeholder.com/1200x200?text=Cultura+Escapística+Banner" alt="Cultura Escapística" class="w-full rounded-md mb-6 shadow-md">
       
       <!-- Intro -->
       <p class="text-base md:text-lg mb-8 text-pastel-text text-center">
-        Este sitio resume los perfiles de cada integrante del equipo de Escape Room, ayudando a asignar roles estratégicos.
+        Este sitio resume los perfiles de cada integrante del equipo de Cultura Escapística, ayudando a asignar roles estratégicos.
       </p>
 
       <!-- Profile Display -->
       <div id="profile" class="bg-pastel-card p-6 rounded-lg shadow-md hover:shadow-xl transition">
-        <h2 id="member-name" class="text-2xl font-semibold mb-4"></h2>
-        <p id="member-role" class="text-base md:text-lg mb-4"></p>
+        <div class="flex items-center mb-4">
+          <img id="member-avatar" src="https://via.placeholder.com/64?text=Avatar" alt="Avatar" class="w-16 h-16 rounded-full mr-4">
+          <div>
+            <h2 id="member-name" class="text-2xl font-semibold"></h2>
+            <p id="member-role" class="text-base md:text-lg"></p>
+          </div>
+        </div>
         <h3 class="text-xl font-medium mb-2">Skills</h3>
         <div class="flex flex-col md:flex-row gap-4">
           <div class="w-full md:w-1/2">
@@ -124,6 +129,7 @@
     const teamData = {
       John: {
         role: "Especialista Manual y Explorador / Operativo de campo",
+        avatar: "https://via.placeholder.com/64?text=John",
         stats: [
           { skill: "Análisis", score: 3 },
           { skill: "Exploración", score: 4 },
@@ -156,6 +162,7 @@
       },
       Euca: {
         role: "Analista / Criptógrafo Visual + Segundo Coordinador",
+        avatar: "https://via.placeholder.com/64?text=Euca",
         stats: [
           { skill: "Análisis", score: 5 },
           { skill: "Exploración", score: 5 },
@@ -188,6 +195,7 @@
       },
       Belu: {
         role: "Coordinador general / Líder analítico",
+        avatar: "https://via.placeholder.com/64?text=Belu",
         stats: [
           { skill: "Análisis", score: 4 },
           { skill: "Exploración", score: 5 },
@@ -218,10 +226,38 @@
           "Acompañamiento activo a los demás sin sobrecargarse con tareas físicas o técnicas muy específicas."
         ]
       },
-      Gaby: { role: "Especialista Manual y Explorador / Operativo de campo", stats: [], motivos: [], consideraciones: [], rolSugerido: [] },
-      Vicky: { role: "Especialista Manual y Explorador / Operativo de campo", stats: [], motivos: [], consideraciones: [], rolSugerido: [] },
-      Diego: { role: "Especialista Manual y Explorador / Operativo de campo", stats: [], motivos: [], consideraciones: [], rolSugerido: [] },
-      Lauti: { role: "Especialista Manual y Explorador / Operativo de campo", stats: [], motivos: [], consideraciones: [], rolSugerido: [] }
+      Gaby: {
+        role: "Especialista Manual y Explorador / Operativo de campo",
+        avatar: "https://via.placeholder.com/64?text=Gaby",
+        stats: [],
+        motivos: [],
+        consideraciones: [],
+        rolSugerido: []
+      },
+      Vicky: {
+        role: "Especialista Manual y Explorador / Operativo de campo",
+        avatar: "https://via.placeholder.com/64?text=Vicky",
+        stats: [],
+        motivos: [],
+        consideraciones: [],
+        rolSugerido: []
+      },
+      Diego: {
+        role: "Especialista Manual y Explorador / Operativo de campo",
+        avatar: "https://via.placeholder.com/64?text=Diego",
+        stats: [],
+        motivos: [],
+        consideraciones: [],
+        rolSugerido: []
+      },
+      Lauti: {
+        role: "Especialista Manual y Explorador / Operativo de campo",
+        avatar: "https://via.placeholder.com/64?text=Lauti",
+        stats: [],
+        motivos: [],
+        consideraciones: [],
+        rolSugerido: []
+      }
     };
 
     let radarChart = null;
@@ -238,6 +274,7 @@
       const data = teamData[member];
       document.getElementById("member-name").textContent = member;
       document.getElementById("member-role").textContent = `Role: ${data.role}`;
+      document.getElementById("member-avatar").src = data.avatar;
       
       // Update Stats Table
       const statsTable = document.getElementById("stats-table");
