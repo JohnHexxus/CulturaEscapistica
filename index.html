@@ -100,18 +100,44 @@
         </div>
         <h3 class="text-xl font-medium mb-2">Skills</h3>
         <div class="flex flex-col md:flex-row gap-4">
-          <div class="w-full md:w-1/3"> <!-- Tabla -->
-            <table class="text-sm w-full mb-4 border-collapse table-auto">
-              <thead>
-                <tr class="bg-pastel-button">
-                  <th class="p-1 border border-pastel-text">Skill</th>
-                  <th class="p-1 border border-pastel-text">Score</th>
-                </tr>
-              </thead>
-              <tbody id="stats-table"></tbody>
-            </table>
+          <!-- COLUMNA IZQUIERDA -->
+          <div class="w-full md:w-1/3 flex flex-col gap-4">
+            <!-- Tabla -->
+            <div>
+              <h3 class="text-xl font-medium mb-2">Skills</h3>
+              <table class="text-sm w-full mb-2 border-collapse table-auto">
+                <thead>
+                  <tr class="bg-pastel-button">
+                    <th class="p-1 border border-pastel-text">Skill</th>
+                    <th class="p-1 border border-pastel-text">Score</th>
+                  </tr>
+                </thead>
+                <tbody id="stats-table"></tbody>
+              </table>
+            </div>
+        
+            <!-- Motivos -->
+            <div>
+              <h3 class="text-xl font-medium mb-1">Motivos</h3>
+              <ul id="motivos" class="list-disc pl-5 text-pastel-text text-sm"></ul>
+            </div>
+        
+            <!-- Consideraciones -->
+            <div>
+              <h3 class="text-xl font-medium mb-1">Consideraciones</h3>
+              <ul id="consideraciones" class="list-disc pl-5 text-pastel-text text-sm"></ul>
+            </div>
+        
+            <!-- Rol sugerido -->
+            <div>
+              <h3 class="text-xl font-medium mb-1">Rol sugerido</h3>
+              <ul id="rol-sugerido" class="list-disc pl-5 text-pastel-text text-sm"></ul>
+            </div>
           </div>
-         <div class="w-full md:w-2/3"> <!-- Gráfico -->
+        
+          <!-- COLUMNA DERECHA -->
+          <div class="w-full md:w-2/3">
+            <h3 class="text-xl font-medium mb-2">Radar de habilidades</h3>
             <canvas id="skills-chart" class="mb-4" height="260"></canvas>
           </div>
         </div>
