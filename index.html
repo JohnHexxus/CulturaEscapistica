@@ -42,55 +42,81 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Escape Room team profiles with skills and roles for strategic puzzle-solving.">
   <title>Escape Room Team Profiles</title>
+  <link rel="icon" type="image/png" href="https://via.placeholder.com/32?text=🔐">
   <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'pastel-bg': '#F0F4F8',
+            'pastel-card': '#E6EFFF',
+            'pastel-button': '#A3BFFA',
+            'pastel-button-hover': '#7F9CF5',
+            'pastel-text': '#4B5EAA'
+          }
+        }
+      }
+    }
+  </script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
-<body class="bg-gray-100 font-sans">
-  <div class="container mx-auto p-4">
-    <h1 class="text-3xl font-bold text-center mb-6">Escape Room Team Profiles</h1>
-    
-    <!-- Dropdown Menu -->
-    <div class="mb-4">
-      <label for="team-member" class="block text-lg font-medium text-gray-700">Select Team Member:</label>
-      <select id="team-member" class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
-        <option value="John">John</option>
-        <option value="Euca">Euca</option>
-        <option value="Belu">Belu</option>
-        <option value="Gaby">Gaby</option>
-        <option value="Vicky">Vicky</option>
-        <option value="Diego">Diego</option>
-        <option value="Lauti">Lauti</option>
-      </select>
+<body class="bg-pastel-bg text-pastel-text font-sans">
+  <div class="flex min-h-screen">
+    <!-- Sidebar Menu -->
+    <div class="w-40 p-4 bg-pastel-card shadow-md">
+      <h2 class="text-lg font-semibold mb-4">Team Members</h2>
+      <div class="flex flex-col gap-2" id="member-selector">
+        <button onclick="displayProfile('John')" class="bg-pastel-button hover:bg-pastel-button-hover text-pastel-text py-1 px-2 rounded-md shadow-sm transition transform hover:scale-105 text-sm">John</button>
+        <button onclick="displayProfile('Euca')" class="bg-pastel-button hover:bg-pastel-button-hover text-pastel-text py-1 px-2 rounded-md shadow-sm transition transform hover:scale-105 text-sm">Euca</button>
+        <button onclick="displayProfile('Belu')" class="bg-pastel-button hover:bg-pastel-button-hover text-pastel-text py-1 px-2 rounded-md shadow-sm transition transform hover:scale-105 text-sm">Belu</button>
+        <button onclick="displayProfile('Gaby')" class="bg-pastel-button hover:bg-pastel-button-hover text-pastel-text py-1 px-2 rounded-md shadow-sm transition transform hover:scale-105 text-sm">Gaby</button>
+        <button onclick="displayProfile('Vicky')" class="bg-pastel-button hover:bg-pastel-button-hover text-pastel-text py-1 px-2 rounded-md shadow-sm transition transform hover:scale-105 text-sm">Vicky</button>
+        <button onclick="displayProfile('Diego')" class="bg-pastel-button hover:bg-pastel-button-hover text-pastel-text py-1 px-2 rounded-md shadow-sm transition transform hover:scale-105 text-sm">Diego</button>
+        <button onclick="displayProfile('Lauti')" class="bg-pastel-button hover:bg-pastel-button-hover text-pastel-text py-1 px-2 rounded-md shadow-sm transition transform hover:scale-105 text-sm">Lauti</button>
+      </div>
     </div>
 
-    <!-- Profile Display -->
-    <div id="profile" class="bg-white p-6 rounded-lg shadow-md">
-      <h2 id="member-name" class="text-2xl font-semibold mb-4"></h2>
-      <p id="member-role" class="text-lg mb-4"></p>
-      <h3 class="text-xl font-medium mb-2">Skills</h3>
-      <div class="flex flex-row gap-4">
-        <div class="w-1/2">
-          <table class="w-full mb-4 border-collapse">
-            <thead>
-              <tr class="bg-gray-200">
-                <th class="border p-2">Skill</th>
-                <th class="border p-2">Score</th>
-              </tr>
-            </thead>
-            <tbody id="stats-table"></tbody>
-          </table>
+    <!-- Main Content -->
+    <div class="flex-1 p-4">
+      <!-- Banner -->
+      <img src="https://via.placeholder.com/1200x200?text=Escape+Room+Banner" alt="Escape Room" class="w-full rounded-md mb-6 shadow-md">
+      
+      <!-- Intro -->
+      <p class="text-base md:text-lg mb-8 text-pastel-text text-center">
+        Este sitio resume los perfiles de cada integrante del equipo de Escape Room, ayudando a asignar roles estratégicos.
+      </p>
+
+      <!-- Profile Display -->
+      <div id="profile" class="bg-pastel-card p-6 rounded-lg shadow-md hover:shadow-xl transition">
+        <h2 id="member-name" class="text-2xl font-semibold mb-4"></h2>
+        <p id="member-role" class="text-base md:text-lg mb-4"></p>
+        <h3 class="text-xl font-medium mb-2">Skills</h3>
+        <div class="flex flex-col md:flex-row gap-4">
+          <div class="w-full md:w-1/2">
+            <table class="w-full mb-4 border-collapse">
+              <thead>
+                <tr class="bg-pastel-button">
+                  <th class="border border-pastel-text p-2">Skill</th>
+                  <th class="border border-pastel-text p-2">Score</th>
+                </tr>
+              </thead>
+              <tbody id="stats-table"></tbody>
+            </table>
+          </div>
+          <div class="w-full md:w-1/2">
+            <canvas id="skills-chart" class="mb-4"></canvas>
+          </div>
         </div>
-        <div class="w-1/2">
-          <canvas id="skills-chart" class="mb-4"></canvas>
-        </div>
+        <h3 class="text-xl font-medium mb-2">Motivos</h3>
+        <ul id="motivos" class="list-disc pl-5 mb-4 text-pastel-text"></ul>
+        <h3 class="text-xl font-medium mb-2">Consideraciones</h3>
+        <ul id="consideraciones" class="list-disc pl-5 mb-4 text-pastel-text"></ul>
+        <h3 class="text-xl font-medium mb-2">Rol Sugerido</h3>
+        <ul id="rol-sugerido" class="list-disc pl-5 text-pastel-text"></ul>
       </div>
-      <h3 class="text-xl font-medium mb-2">Motivos</h3>
-      <ul id="motivos" class="list-disc pl-5 mb-4"></ul>
-      <h3 class="text-xl font-medium mb-2">Consideraciones</h3>
-      <ul id="consideraciones" class="list-disc pl-5 mb-4"></ul>
-      <h3 class="text-xl font-medium mb-2">Rol Sugerido</h3>
-      <ul id="rol-sugerido" class="list-disc pl-5"></ul>
     </div>
   </div>
 
@@ -199,8 +225,16 @@
     };
 
     let radarChart = null;
+    let selectedMember = null;
 
     function displayProfile(member) {
+      // Update selected button styling
+      if (selectedMember) {
+        document.querySelector(`button[onclick="displayProfile('${selectedMember}')"]`).classList.remove('ring-2', 'ring-pastel-button-hover');
+      }
+      selectedMember = member;
+      document.querySelector(`button[onclick="displayProfile('${member}')"]`).classList.add('ring-2', 'ring-pastel-button-hover');
+
       const data = teamData[member];
       document.getElementById("member-name").textContent = member;
       document.getElementById("member-role").textContent = `Role: ${data.role}`;
@@ -210,7 +244,7 @@
       statsTable.innerHTML = "";
       data.stats.forEach(stat => {
         const row = document.createElement("tr");
-        row.innerHTML = `<td class="border p-2">${stat.skill}</td><td class="border p-2">${stat.score || "N/A"}</td>`;
+        row.innerHTML = `<td class="border border-pastel-text p-2">${stat.skill}</td><td class="border border-pastel-text p-2">${stat.score || "N/A"}</td>`;
         statsTable.appendChild(row);
       });
 
@@ -226,23 +260,44 @@
           datasets: [{
             label: `${member}'s Skills`,
             data: data.stats.map(stat => stat.score || 0),
-            backgroundColor: "rgba(54, 162, 235, 0.2)",
-            borderColor: "rgba(54, 162, 235, 1)",
-            borderWidth: 1
+            backgroundColor: "rgba(163, 191, 250, 0.4)",
+            borderColor: "rgba(163, 191, 250, 1)",
+            borderWidth: 2,
+            pointBackgroundColor: "rgba(163, 191, 250, 1)",
+            pointBorderColor: "#fff",
+            pointHoverBackgroundColor: "#fff",
+            pointHoverBorderColor: "rgba(163, 191, 250, 1)"
           }]
         },
         options: {
+          animation: {
+            duration: 1000,
+            easing: 'easeInOutQuad'
+          },
           scales: {
             r: {
-              angleLines: { display: true },
+              angleLines: { display: true, color: 'rgba(75, 94, 170, 0.3)' },
+              grid: { color: 'rgba(75, 94, 170, 0.2)' },
+              pointLabels: { font: { size: 12, color: '#4B5EAA' } },
               suggestedMin: 0,
               suggestedMax: 5,
               ticks: {
                 stepSize: 1,
                 min: 0,
                 max: 5,
+                backdropColor: 'transparent',
+                color: '#4B5EAA',
                 callback: function(value) {
                   return Number.isInteger(value) ? value : null;
+                }
+              }
+            }
+          },
+          plugins: {
+            tooltip: {
+              callbacks: {
+                label: function(context) {
+                  return `${context.label}: ${context.raw} (1 = Muy bajo, 5 = Experto)`;
                 }
               }
             }
@@ -277,10 +332,6 @@
         rolSugeridoList.appendChild(li);
       });
     }
-
-    document.getElementById("team-member").addEventListener("change", (e) => {
-      displayProfile(e.target.value);
-    });
 
     // Initial display
     displayProfile("John");
