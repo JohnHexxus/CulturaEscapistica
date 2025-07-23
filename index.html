@@ -1,0 +1,289 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Escape Room Team Profiles</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="bg-gray-100 font-sans">
+  <div class="container mx-auto p-4">
+    <h1 class="text-3xl font-bold text-center mb-6">Escape Room Team Profiles</h1>
+    
+    <!-- Dropdown Menu -->
+    <div class="mb-4">
+      <label for="team-member" class="block text-lg font-medium text-gray-700">Select Team Member:</label>
+      <select id="team-member" class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
+        <option value="John">John</option>
+        <option value="Euca">Euca</option>
+        <option value="Belu">Belu</option>
+        <option value="Gaby">Gaby</option>
+        <option value="Vicky">Vicky</option>
+        <option value="Diego">Diego</option>
+        <option value="Lauti">Lauti</option>
+      </select>
+    </div>
+
+    <!-- Profile Display -->
+    <div id="profile" class="bg-white p-6 rounded-lg shadow-md">
+      <h2 id="member-name" class="text-2xl font-semibold mb-4"></h2>
+      <p id="member-role" class="text-lg mb-4"></p>
+      <h3 class="text-xl font-medium mb-2">Skills</h3>
+      <div class="flex flex-row gap-4">
+        <div class="w-1/2">
+          <table class="w-full mb-4 border-collapse">
+            <thead>
+              <tr class="bg-gray-200">
+                <th class="border p-2">Skill</th>
+                <th class="border p-2">Score</th>
+              </tr>
+            </thead>
+            <tbody id="stats-table"></tbody>
+          </table>
+        </div>
+        <div class="w-1/2">
+          <canvas id="skills-chart" class="mb-4"></canvas>
+        </div>
+      </div>
+      <h3 class="text-xl font-medium mb-2">Motivos</h3>
+      <ul id="motivos" class="list-disc pl-5 mb-4"></ul>
+      <h3 class="text-xl font-medium mb-2">Consideraciones</h3>
+      <ul id="consideraciones" class="list-disc pl-5 mb-4"></ul>
+      <h3 class="text-xl font-medium mb-2">Rol Sugerido</h3>
+      <ul id="rol-sugerido" class="list-disc pl-5"></ul>
+    </div>
+  </div>
+
+  <script>
+    const teamData = {
+      John: {
+        role: "Especialista Manual y Explorador / Operativo de campo",
+        stats: [
+          { skill: "Análisis", score: 3 },
+          { skill: "Exploración", score: 4 },
+          { skill: "Criptografía matemática", score: 4 },
+          { skill: "Criptografía numérica", score: 3 },
+          { skill: "Criptografía visual o pictogramas", score: 1 },
+          { skill: "Destreza manual", score: 5 },
+          { skill: "Acertijos", score: 2 },
+          { skill: "Pensamiento Lateral", score: 2 },
+          { skill: "Memoria", score: 4 },
+          { skill: "Comunicación", score: 1 },
+          { skill: "Liderazgo", score: 1 }
+        ],
+        motivos: [
+          "Alta destreza manual → ideal para tareas físicas, manipulación de mecanismos, interacción con objetos.",
+          "Buen nivel de exploración → puede revisar entornos detalladamente, encontrar compartimentos, objetos o pistas ocultas.",
+          "Fuerte en criptografía matemática y aceptable en criptografía numérica → útil en puzzles que requieran razonamiento lógico con números o cuentas simples."
+        ],
+        consideraciones: [
+          "Muy bajo en liderazgo y comunicación: Este perfil probablemente no se sienta cómodo liderando, ni transmitiendo ideas en voz alta, especialmente bajo presión. Debería estar acompañado por alguien que lo complemente en ese aspecto.",
+          "Bajo en acertijos, pensamiento lateral y análisis: No es ideal para tareas de deducción compleja, interpretación ambigua o puzzles que requieran combinar información diversa.",
+          "Criptografía visual: No se recomienda asignarle enigmas que involucren símbolos, dibujos, mapas o patrones visuales abstractos."
+        ],
+        rolSugerido: [
+          "Resolución de puzzles físicos",
+          "Manipulación de objetos o mecanismos",
+          "Apoyo en exploración del entorno físico",
+          "Tareas puntuales que requieran ejecución precisa, más que interpretación ambigua"
+        ]
+      },
+      Euca: {
+        role: "Analista / Criptógrafo Visual + Segundo Coordinador",
+        stats: [
+          { skill: "Análisis", score: 5 },
+          { skill: "Exploración", score: 5 },
+          { skill: "Criptografía matemática", score: 3 },
+          { skill: "Criptografía numérica", score: 4 },
+          { skill: "Criptografía visual o pictogramas", score: 5 },
+          { skill: "Destreza manual", score: 3 },
+          { skill: "Acertijos", score: 4 },
+          { skill: "Pensamiento Lateral", score: 3 },
+          { skill: "Memoria", score: 3 },
+          { skill: "Comunicación", score: 4 },
+          { skill: "Liderazgo", score: 4 }
+        ],
+        motivos: [
+          "Tiene un perfil claramente analítico y lógico, ideal para tareas de interpretación de pistas complejas.",
+          "Muy fuerte en criptografía visual y numérica → clave en salas con símbolos, colores, imágenes, mapas, secuencias, etc.",
+          "Tiene buen liderazgo y comunicación, por lo tanto podría ayudar en la coordinación en ausencia del líder o cuando el equipo se divida."
+        ],
+        consideraciones: [
+          "Baja destreza manual: Es preferible que no sea asignado a puzzles físicos, mecanismos delicados, tareas que requieran coordinación motriz o manipulación de objetos bajo presión.",
+          "Baja criptografía matemática: Si bien puede complementar con razonamiento visual o numérico, no es ideal que lleve la delantera en enigmas que requieran cálculos precisos o fórmulas.",
+          "Memoria moderadamente baja: Conviene que no se le asignen tareas que dependan de recordar secuencias largas, combinaciones o datos dispersos sin ayuda externa (notas, pizarras, etc.)."
+        ],
+        rolSugerido: [
+          "Resolver acertijos lógicos y simbólicos.",
+          "Desbloquear enigmas visuales o de patrones complejos.",
+          "Comunicar ideas con claridad al equipo.",
+          "Tomar decisiones o guiar al grupo si el líder necesita apoyo."
+        ]
+      },
+      Belu: {
+        role: "Coordinador general / Líder analítico",
+        stats: [
+          { skill: "Análisis", score: 4 },
+          { skill: "Exploración", score: 5 },
+          { skill: "Criptografía matemática", score: 3 },
+          { skill: "Criptografía numérica", score: 3 },
+          { skill: "Criptografía visual o pictogramas", score: 4 },
+          { skill: "Destreza manual", score: 5 },
+          { skill: "Acertijos", score: 5 },
+          { skill: "Pensamiento Lateral", score: 4 },
+          { skill: "Memoria", score: 4 },
+          { skill: "Comunicación", score: 4 },
+          { skill: "Liderazgo", score: 5 }
+        ],
+        motivos: [
+          "Altísimo puntaje en análisis, exploración, comunicación y liderazgo → perfil ideal para el rol de Coordinador.",
+          "Tiene capacidad para ver el panorama general, tomar decisiones estratégicas, guiar al equipo y mantener el ritmo de la sala.",
+          "Muy buen desempeño en resolución de acertijos y pensamiento lateral → puede aportar también directamente a la resolución de puzzles, no solo a la coordinación."
+        ],
+        consideraciones: [
+          "Criptografía numérica baja: Conviene que no se encargue de enigmas que requieran reconocer o continuar secuencias numéricas sin apoyo.",
+          "Destreza manual baja: No es el indicado para mecanismos físicos ni puzzles que requieran habilidad motriz fina.",
+          "Criptografía en general está balanceada, pero no destaca: Puede colaborar, pero no es un 'especialista criptógrafo'. Sería ideal complementarlo con alguien más fuerte en esa área."
+        ],
+        rolSugerido: [
+          "Coordinación general de la sala.",
+          "Gestión del tiempo, decisiones y prioridades.",
+          "Resolución de acertijos lógicos y puzzles que requieran razonamiento estructurado o pensamiento lateral.",
+          "Acompañamiento activo a los demás sin sobrecargarse con tareas físicas o técnicas muy específicas."
+        ]
+      },
+      Gaby: { role: "Especialista Manual y Explorador / Operativo de campo", stats: [], motivos: [], consideraciones: [], rolSugerido: [] },
+      Vicky: { role: "Especialista Manual y Explorador / Operativo de campo", stats: [], motivos: [], consideraciones: [], rolSugerido: [] },
+      Diego: { role: "Especialista Manual y Explorador / Operativo de campo", stats: [], motivos: [], consideraciones: [], rolSugerido: [] },
+      Lauti: { role: "Especialista Manual y Explorador / Operativo de campo", stats: [], motivos: [], consideraciones: [], rolSugerido: [] }
+    };
+
+    let radarChart = null;
+
+    function displayProfile(member) {
+      const data = teamData[member];
+      document.getElementById("member-name").textContent = member;
+      document.getElementById("member-role").textContent = `Role: ${data.role}`;
+      
+      // Update Stats Table
+      const statsTable = document.getElementById("stats-table");
+      statsTable.innerHTML = "";
+      data.stats.forEach(stat => {
+        const row = document.createElement("tr");
+        row.innerHTML = `<td class="border p-2">${stat.skill}</td><td class="border p-2">${stat.score || "N/A"}</td>`;
+        statsTable.appendChild(row);
+      });
+
+      // Update Radar Chart
+      const ctx = document.getElementById("skills-chart").getContext("2d");
+      if (radarChart) {
+        radarChart.destroy();
+      }
+      radarChart = new Chart(ctx, {
+        type: "radar",
+        data: {
+          labels: data.stats.map(stat => stat.skill),
+          datasets: [{
+            label: `${member}'s Skills`,
+            data: data.stats.map(stat => stat.score || 0),
+            backgroundColor: "rgba(54, 162, 235, 0.2)",
+            borderColor: "rgba(54, 162, 235, 1)",
+            borderWidth: 1
+          }]
+        },
+        options: {
+          scales: {
+            r: {
+              angleLines: { display: true },
+              suggestedMin: 0,
+              suggestedMax: 5,
+              ticks: {
+                stepSize: 1,
+                min: 0,
+                max: 5,
+                callback: function(value) {
+                  return Number.isInteger(value) ? value : null;
+                }
+              }
+            }
+          }
+        }
+      });
+
+      // Update Motivos
+      const motivosList = document.getElementById("motivos");
+      motivosList.innerHTML = "";
+      data.motivos.forEach(motivo => {
+        const li = document.createElement("li");
+        li.textContent = motivo;
+        motivosList.appendChild(li);
+      });
+
+      // Update Consideraciones
+      const consideracionesList = document.getElementById("consideraciones");
+      consideracionesList.innerHTML = "";
+      data.consideraciones.forEach(consideracion => {
+        const li = document.createElement("li");
+        li.textContent = consideracion;
+        consideracionesList.appendChild(li);
+      });
+
+      // Update Rol Sugerido
+      const rolSugeridoList = document.getElementById("rol-sugerido");
+      rolSugeridoList.innerHTML = "";
+      data.rolSugerido.forEach(rol => {
+        const li = document.createElement("li");
+        li.textContent = rol;
+        rolSugeridoList.appendChild(li);
+      });
+    }
+
+    document.getElementById("team-member").addEventListener("change", (e) => {
+      displayProfile(e.target.value);
+    });
+
+    // Initial display
+    displayProfile("John");
+  </script>
+</body>
+</html>
